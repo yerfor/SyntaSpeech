@@ -40,7 +40,7 @@ bash mfa_usr/install_mfa.sh # install force alignment tools
 
 #### Data Preparation
 
-You can directly use our binarized datasets for LJSpeech and Biaobei. Download them from [this link]() and unzip them into the `data/binary/` folder.
+You can directly use our binarized datasets for [LJSpeech](https://drive.google.com/file/d/1WfErAxKqMluQU3vupWS6VB6NdehXwCKM/view?usp=sharing) and [Biaobei](https://drive.google.com/file/d/1-ApEbBrW5kfF0jM18EmW7DCsll-c1ROp/view?usp=sharing). Download them and unzip them into the `data/binary/` folder.
 
 As for LibriTTS, you can download the raw datasets and process them with our `data_gen` modules. Detailed instructions can be found in [dosc/prepare_data](docs/prepare_data.md).
 

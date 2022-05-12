@@ -14,7 +14,7 @@
 
 1. 我们提出了**Syntactic Graph Builder (论文的3.1小节)** 和**Syntactic Graph Encoder (论文的3.2小节)**，被证明是提取句法特征以提高韵律建模和持续时间准确性的有效单元 TTS 模型。
 2. 我们引入了**Multi-Length Adversarial Training (论文的3.3小节)**，它可以替代PortaSpeech 中基于flow的post-net，加快推理时间的同时提高音频质量的自然度。
-3. 我们支持三个数据集：[LJSpeech](https://keithito.com/LJ-Speech-Dataset/)（单人英语数据集）、[Biaobei](https://www.data-baker.com/ open%20source.html)（单人中文数据集）和[LibriTTS](http://www.openslr.org/60)（多人英语数据集）
+3. 我们支持三个数据集：[LJSpeech](https://keithito.com/LJ-Speech-Dataset/)（单人英语数据集）、[Biaobei]() （单人中文数据集）和[LibriTTS](http://www.openslr.org/60)（多人英语数据集）
 
 搭建环境
 
@@ -40,7 +40,7 @@ bash mfa_usr/install_mfa.sh # install force alignment tools
 
 #### 准备数据集
 
-您可以直接使用我们的处理好的LJSpeech数据集和 Biaobei数据集。 从[这个链接]() 下载它们并将它们解压缩到 `data/binary/` 文件夹中。
+您可以直接使用我们的处理好的[LJSpeech数据集](https://drive.google.com/file/d/1WfErAxKqMluQU3vupWS6VB6NdehXwCKM/view?usp=sharing)和 [Biaobei](https://drive.google.com/file/d/1-ApEbBrW5kfF0jM18EmW7DCsll-c1ROp/view?usp=sharing)数据集。 从链接给的谷歌云盘里下载它们并将它们解压缩到 `data/binary/` 文件夹中。
 
 至于 LibriTTS，您可以下载原始数据集并使用我们的“data_gen”模块对其进行处理。 详细说明可以在 [dosc/prepare_data](docs/prepare_data.md) 中找到。
 
