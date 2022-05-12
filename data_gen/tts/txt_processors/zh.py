@@ -92,6 +92,11 @@ class TxtProcessor(BaseTxtProcessor):
             if ph == '|' or ph == '#':
                 i += 1
                 continue
+            elif ph in [',', '.']:
+                i += 1
+                txt_struct[i][1].append(ph)
+                i += 1
+                continue
             txt_struct[i][1].append(ph)
         # return ph_list, txt
         txt_struct.insert(0, ['<BOS>', ['<BOS>']])
