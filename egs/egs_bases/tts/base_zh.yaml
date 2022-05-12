@@ -1,0 +1,5 @@
+base_config: ./base.yaml
+preprocess_args:
+  txt_processor: zh
+
+word_size: 3000
