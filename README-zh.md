@@ -1,97 +1,104 @@
+# SyntaSpeech: Syntax-Aware Generative Adversarial Text-to-Speech
+
+[![arXiv](https://img.shields.io/badge/arXiv-Paper-%3CCOLOR%3E.svg)](https://arxiv.org/abs/2204.11792) | [![GitHub Stars](https://img.shields.io/github/stars/yerfor/SyntaSpeech)](https://github.com/yerfor/SyntaSpeech) | [![downloads](https://img.shields.io/github/downloads/yerfor/SyntaSpeech/total.svg)](https://github.com/yerfor/SyntaSpeech/releases) | [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue)](https://huggingface.co/spaces/yerfor/SyntaSpeech) | [English README](README.md)
+
+这个仓库包含了我们的 IJCAI-2022 [论文](https://arxiv.org/abs/2204.11792) 的官方 PyTorch 实现，我们在其中提出了 **SyntaSpeech** ，一种语法感知的非自回归语音合成算法.
+
 <p align="center">
     <br>
-    <img src="assets/logo.png" width="200"/>
+    <img src="assets/SyntaSpeech.png" width="1000"/>
     <br>
 </p>
 
-<h2 align="center">
-<p> NATSpeech: A Non-Autoregressive Text-to-Speech Framework</p>
-</h2>
+我们的 SyntaSpeech 建立在 [PortaSpeech](https://github.com/NATSpeech/NATSpeech) (NeurIPS 2021) 的基础上，具有三个新功能：
 
-<div align="center">
+1. 我们提出了**Syntactic Graph Builder (论文的3.1小节)** 和**Syntactic Graph Encoder (论文的3.2小节)**，被证明是提取句法特征以提高韵律建模和持续时间准确性的有效单元 TTS 模型。
+2. 我们引入了**Multi-Length Adversarial Training (论文的3.3小节)**，它可以替代PortaSpeech 中基于flow的post-net，加快推理时间的同时提高音频质量的自然度。
+3. 我们支持三个数据集：[LJSpeech](https://keithito.com/LJ-Speech-Dataset/)（单人英语数据集）、[Biaobei](https://www.data-baker.com/ open%20source.html)（单人中文数据集）和[LibriTTS](http://www.openslr.org/60)（多人英语数据集）
 
-[![](https://img.shields.io/github/stars/NATSpeech/NATSpeech)](https://github.com/NATSpeech/NATSpeech)
-[![](https://img.shields.io/github/forks/NATSpeech/NATSpeech)](https://github.com/NATSpeech/NATSpeech)
-[![](https://img.shields.io/github/license/NATSpeech/NATSpeech)](https://github.com/NATSpeech/NATSpeech/blob/main/LICENSE)
-[![](https://img.shields.io/github/downloads/NATSpeech/NATSpeech/total?label=pretrained+model+downloads)](https://github.com/NATSpeech/NATSpeech/releases/tag/pretrained_models) | [English README](./README.md)
+搭建环境
 
-</div>
-
-本仓库包含了以下工作的官方PyTorch实现：
-
-- [PortaSpeech: Portable and High-Quality Generative Text-to-Speech](https://proceedings.neurips.cc/paper/2021/file/748d6b6ed8e13f857ceaa6cfbdca14b8-Paper.pdf) (NeurIPS 2021)[Demo页面](https://portaspeech.github.io/) | [HuggingFace🤗 Demo](https://huggingface.co/spaces/NATSpeech/PortaSpeech)
-- [DiffSinger: Singing Voice Synthesis via Shallow Diffusion Mechanism](https://arxiv.org/abs/2105.02446) (DiffSpeech) (AAAI 2022)
-  [Demo页面](https://diffsinger.github.io/) | [项目主页](https://github.com/MoonInTheRiver/DiffSinger) | [HuggingFace🤗 Demo](https://huggingface.co/spaces/NATSpeech/DiffSpeech)
-
-## 主要特点
-
-我们在本框架中实现了以下特点：
-
-- 基于[Montreal Forced Aligner](https://github.com/MontrealCorpusTools/Montreal-Forced-Aligner)的非自回归语音合成数据处理流程；
-- 便于使用和可扩展的训练和测试框架；
-- 简单但有效的随机访问数据集类的实现。
-
-## 安装依赖
-
-```bash
-## 在 Linux/Ubuntu 18.04 上通过测试 
-## 首先需要安装 Python 3.6+ (推荐使用Anaconda)
-
-export PYTHONPATH=.
-# 创建虚拟环境 (推荐).
-python -m venv venv
-source venv/bin/activate
-# 安装依赖
+```
+conda create -n synta python=3.7
+source activate synta
 pip install -U pip
 pip install Cython numpy==1.19.1
-pip install torch==1.9.0 # 推荐 torch >= 1.9.0
+pip install torch==1.9.0 
 pip install -r requirements.txt
+# install dgl for graph neural network, dgl-cu102 supports rtx2080, dgl-cu113 support rtx3090
+pip install dgl-cu102 dglgo -f https://data.dgl.ai/wheels/repo.html 
 sudo apt install -y sox libsox-fmt-mp3
-bash mfa_usr/install_mfa.sh # 安装强制对齐工具
-pip install dgl-cu102 dglgo -f https://data.dgl.ai/wheels/repo.html
+bash mfa_usr/install_mfa.sh # install force alignment tools
+
 ```
 
-## 文档
+## 运行 SyntaSpeech!
 
-- [关于本框架](./docs/zh/framework.md)
-- [运行PortaSpeech](./docs/portaspeech.md)
-- [运行DiffSpeech](./docs/diffspeech.md)
+请按照以下步骤以运行此仓库。
+
+### 1. 准备数据集和声码器
+
+#### 准备数据集
+
+您可以直接使用我们的处理好的LJSpeech数据集和 Biaobei数据集。 从[这个链接]() 下载它们并将它们解压缩到 `data/binary/` 文件夹中。
+
+至于 LibriTTS，您可以下载原始数据集并使用我们的“data_gen”模块对其进行处理。 详细说明可以在 [dosc/prepare_data](docs/prepare_data.md) 中找到。
+
+#### 准备声码器
+
+我们为三个数据集提供了预训练的声码器模型。 具体来说，Hifi-GAN 用于 [LJSpeech]() 和 [Biaobei]()，ParallelWaveGAN 用于 [LibriTTS]()。 将它们下载并解压到 `checkpoints/`文件夹。
+
+### 2. 开始训练!
+
+然后你可以在三个数据集中训练 SyntaSpeech。
+
+```
+cd <the root_dir of your SyntaSpeech folder>
+export PYTHONPATH=./
+CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/lj/synta.yaml --exp_name lj_synta --reset # training in LJSpeech
+CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/biaobei/synta.yaml --exp_name biaobei_synta --reset # training in Biaobei
+CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/biaobei/synta.yaml --exp_name libritts_synta --reset # training in LibriTTS
+```
+
+### 3. Tensorboard
+
+```
+tensorboard --logdir=checkpoints/lj_synta
+tensorboard --logdir=checkpoints/biaobei_synta
+tensorboard --logdir=checkpoints/libritts_synta
+```
+
+### 4. 模型推理
+
+```
+CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/lj/synta.yaml --exp_name lj_synta --reset --infer # inference in LJSpeech
+CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/biaobei/synta.yaml --exp_name biaobei_synta --reset --infer # inference in Biaobei
+CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/biaobei/synta.yaml --exp_name libritts_synta --reset ---infer # inference in LibriTTS
+```
+
+## 音频演示
+
+音频样本可以在我们的 [demo page](https://syntaspeech.github.io/) 中找到。
 
 ## 引用
 
-如果本REPO对你的研究和工作有用，请引用以下论文：
-
-- PortaSpeech
-
-```bib
-@article{ren2021portaspeech,
-  title={PortaSpeech: Portable and High-Quality Generative Text-to-Speech},
-  author={Ren, Yi and Liu, Jinglin and Zhao, Zhou},
-  journal={Advances in Neural Information Processing Systems},
-  volume={34},
-  year={2021}
+```
+@article{ye2022syntaspeech,
+  title={SyntaSpeech: Syntax-Aware Generative Adversarial Text-to-Speech},
+  author={Ye, Zhenhui and Zhao, Zhou and Ren, Yi and Wu, Fei},
+  journal={arXiv preprint arXiv:2204.11792},
+  year={2022}
 }
 ```
 
-- DiffSpeech
+## 致谢Acknowledgement
 
-```bib
-@article{liu2021diffsinger,
-  title={Diffsinger: Singing voice synthesis via shallow diffusion mechanism},
-  author={Liu, Jinglin and Li, Chengxi and Ren, Yi and Chen, Feiyang and Liu, Peng and Zhao, Zhou},
-  journal={arXiv preprint arXiv:2105.02446},
-  volume={2},
-  year={2021}
- }
-```
+**我们的代码基于以下仓库：**
 
-## 致谢
-
-我们的代码受以下代码和仓库启发：
-
-- [PyTorch Lightning](https://github.com/PyTorchLightning/pytorch-lightning)
-- [ParallelWaveGAN](https://github.com/kan-bayashi/ParallelWaveGAN)
-- [Hifi-GAN](https://github.com/jik876/hifi-gan)
-- [espnet](https://github.com/espnet/espnet)
-- [Glow-TTS](https://github.com/jaywalnut310/glow-tts)
-- [DiffSpeech](https://github.com/MoonInTheRiver/DiffSinger)
+* [NATSpeech](https://github.com/NATSpeech/NATSpeech)
+* [PyTorch Lightning](https://github.com/PyTorchLightning/pytorch-lightning)
+* [ParallelWaveGAN](https://github.com/kan-bayashi/ParallelWaveGAN)
+* [HifiGAN](https://github.com/jik876/hifi-gan)
+* [espnet](https://github.com/espnet/espnet)
+* [Glow-TTS](https://github.com/jaywalnut310/glow-tts)
+* [DiffSpeech](https://github.com/MoonInTheRiver/DiffSinger)

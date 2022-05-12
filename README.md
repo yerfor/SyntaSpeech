@@ -1,6 +1,6 @@
 # SyntaSpeech: Syntax-Aware Generative Adversarial Text-to-Speech
 
-[![arXiv](https://img.shields.io/badge/arXiv-Paper-%3CCOLOR%3E.svg)](https://arxiv.org/abs/2204.11792)[![GitHub Stars](https://img.shields.io/github/stars/yerfor/SyntaSpeech)](https://github.com/yerfor/SyntaSpeech)[![downloads](https://img.shields.io/github/downloads/yerfor/SyntaSpeech/total.svg)](https://github.com/yerfor/SyntaSpeech/releases) | [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue)](https://huggingface.co/spaces/yerfor/SyntaSpeech) | [中文文档](README-zh.md)
+[![arXiv](https://img.shields.io/badge/arXiv-Paper-%3CCOLOR%3E.svg)](https://arxiv.org/abs/2204.11792) | [![GitHub Stars](https://img.shields.io/github/stars/yerfor/SyntaSpeech)](https://github.com/yerfor/SyntaSpeech) | [![downloads](https://img.shields.io/github/downloads/yerfor/SyntaSpeech/total.svg)](https://github.com/yerfor/SyntaSpeech/releases) | [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue)](https://huggingface.co/spaces/yerfor/SyntaSpeech) | [中文文档](README-zh.md)
 
 This repository is the official PyTorch implementation of our IJCAI-2022 [paper](https://arxiv.org/abs/2204.11792), in which we propose **SyntaSpeech** for syntax-aware non-autoregressive Text-to-Speech.
 
