@@ -62,7 +62,8 @@ class BaseTTSInfer:
         ph_token = self.ph_encoder.encode(ph)
         spk_id = self.spk_map[spk_name]
         item = {'item_name': item_name, 'text': txt, 'ph': ph, 'spk_id': spk_id,
-                'ph_token': ph_token, 'word_token': word_token, 'ph2word': ph2word}
+                'ph_token': ph_token, 'word_token': word_token, 'ph2word': ph2word,
+                'ph_words':ph_gb_word, 'words': word}
         item['ph_len'] = len(item['ph_token'])
         return item
 
@@ -105,9 +106,14 @@ class BaseTTSInfer:
         from utils.audio.io import save_wav
 
         set_hparams()
-        inp = {
-            'text': 'the invention of movable metal letters in the middle of the fifteenth century may justly be considered as the invention of the art of printing.'
-        }
+        if hp['ds_name'] in ['lj', 'libritts']:
+            inp = {
+                'text': 'the invention of movable metal letters in the middle of the fifteenth century may justly be considered as the invention of the art of printing.'
+            }
+        elif hp['ds_name'] in ['biaobei']:
+            inp = {
+                'text': '如果我想你三遍，天上乌云就散一片。'
+            }
         infer_ins = cls(hp)
         out = infer_ins.infer_once(inp)
         os.makedirs('infer_out', exist_ok=True)

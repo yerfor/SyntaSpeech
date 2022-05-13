@@ -18,9 +18,9 @@ Our SyntaSpeech is built on the basis of  [PortaSpeech](https://github.com/NATSp
 
 ## Environments
 
-```
+```bash
 conda create -n synta python=3.7
-source activate synta
+condac activate synta
 pip install -U pip
 pip install Cython numpy==1.19.1
 pip install torch==1.9.0 
@@ -29,7 +29,6 @@ pip install -r requirements.txt
 pip install dgl-cu102 dglgo -f https://data.dgl.ai/wheels/repo.html 
 sudo apt install -y sox libsox-fmt-mp3
 bash mfa_usr/install_mfa.sh # install force alignment tools
-
 ```
 
 ## Run SyntaSpeech!
@@ -46,13 +45,13 @@ As for LibriTTS, you can download the raw datasets and process them with our `da
 
 #### Vocoder Preparation
 
-We provide the pre-trained model of vocoders for three datasets. Specifically, Hifi-GAN for [LJSpeech]() and [Biaobei](), ParallelWaveGAN for [LibriTTS](). Download and unzip them into the `checkpoints/` folder.
+We provide the pre-trained model of vocoders for three datasets. Specifically, Hifi-GAN for [LJSpeech](https://drive.google.com/file/d/1D8ABD4fa7TK6t_ymzzhtxsWHPhg7OXcG/view?usp=sharing) and [Biaobei](https://drive.google.com/file/d/1onZbPA7rjR1ibmyV1Z-7G22j2Nekiic5/view?usp=sharing), ParallelWaveGAN for [LibriTTS](https://drive.google.com/file/d/1AziBns4R6UDtrAWaIBRm5hWg9io38EWh/view?usp=sharing). Download and unzip them into the `checkpoints/` folder.
 
 ### 2. Training Example
 
 Then you can train SyntaSpeech in the three datasets.
 
-```
+```bash
 cd <the root_dir of your SyntaSpeech folder>
 export PYTHONPATH=./
 CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/lj/synta.yaml --exp_name lj_synta --reset # training in LJSpeech
@@ -62,7 +61,7 @@ CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/biaobei/synta.yaml -
 
 ### 3. Tensorboard
 
-```
+```bash
 tensorboard --logdir=checkpoints/lj_synta
 tensorboard --logdir=checkpoints/biaobei_synta
 tensorboard --logdir=checkpoints/libritts_synta
@@ -70,7 +69,7 @@ tensorboard --logdir=checkpoints/libritts_synta
 
 ### 4. Inference Example
 
-```
+```bash
 CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/lj/synta.yaml --exp_name lj_synta --reset --infer # inference in LJSpeech
 CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/biaobei/synta.yaml --exp_name biaobei_synta --reset --infer # inference in Biaobei
 CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/biaobei/synta.yaml --exp_name libritts_synta --reset ---infer # inference in LibriTTS
@@ -78,7 +77,9 @@ CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/biaobei/synta.yaml -
 
 ## Audio Demos
 
-Audio samples can be found in our [demo page](https://syntaspeech.github.io/).
+Audio samples in the paper can be found in our [demo page](https://syntaspeech.github.io/).
+
+We also provide [HuggingFace Demo Page](https://huggingface.co/spaces/NATSpeech/PortaSpeech) for LJSpeech. Try your interesting sentences there!
 
 ## Citation
 

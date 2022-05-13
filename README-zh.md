@@ -18,9 +18,9 @@
 
 搭建环境
 
-```
+```bash
 conda create -n synta python=3.7
-source activate synta
+conda activate synta
 pip install -U pip
 pip install Cython numpy==1.19.1
 pip install torch==1.9.0 
@@ -29,7 +29,6 @@ pip install -r requirements.txt
 pip install dgl-cu102 dglgo -f https://data.dgl.ai/wheels/repo.html 
 sudo apt install -y sox libsox-fmt-mp3
 bash mfa_usr/install_mfa.sh # install force alignment tools
-
 ```
 
 ## 运行 SyntaSpeech!
@@ -40,19 +39,19 @@ bash mfa_usr/install_mfa.sh # install force alignment tools
 
 #### 准备数据集
 
-您可以直接使用我们的处理好的[LJSpeech数据集](https://drive.google.com/file/d/1WfErAxKqMluQU3vupWS6VB6NdehXwCKM/view?usp=sharing)和 [Biaobei](https://drive.google.com/file/d/1-ApEbBrW5kfF0jM18EmW7DCsll-c1ROp/view?usp=sharing)数据集。 从链接给的谷歌云盘里下载它们并将它们解压缩到 `data/binary/` 文件夹中。
+您可以直接使用我们的处理好的[LJSpeech数据集](https://drive.google.com/file/d/1WfErAxKqMluQU3vupWS6VB6NdehXwCKM/view?usp=sharing)和 [Biaobei](https://drive.google.com/file/d/1n_7NaGCiyieG5TTsPznI1tpHE9q3x9yt/view?usp=sharing)数据集。 从链接给的谷歌云盘里下载它们并将它们解压缩到 `data/binary/` 文件夹中。
 
 至于 LibriTTS，您可以下载原始数据集并使用我们的“data_gen”模块对其进行处理。 详细说明可以在 [dosc/prepare_data](docs/prepare_data.md) 中找到。
 
 #### 准备声码器
 
-我们为三个数据集提供了预训练的声码器模型。 具体来说，Hifi-GAN 用于 [LJSpeech]() 和 [Biaobei]()，ParallelWaveGAN 用于 [LibriTTS]()。 将它们下载并解压到 `checkpoints/`文件夹。
+我们为三个数据集提供了预训练的声码器模型。 具体来说，Hifi-GAN 用于 [LJSpeech](https://drive.google.com/file/d/1D8ABD4fa7TK6t_ymzzhtxsWHPhg7OXcG/view?usp=sharing) 和 [Biaobei](https://drive.google.com/file/d/1onZbPA7rjR1ibmyV1Z-7G22j2Nekiic5/view?usp=sharing)，ParallelWaveGAN 用于 [LibriTTS](https://drive.google.com/file/d/1AziBns4R6UDtrAWaIBRm5hWg9io38EWh/view?usp=sharing)。 将它们下载并解压到 `checkpoints/`文件夹。
 
 ### 2. 开始训练!
 
 然后你可以在三个数据集中训练 SyntaSpeech。
 
-```
+```bash
 cd <the root_dir of your SyntaSpeech folder>
 export PYTHONPATH=./
 CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/lj/synta.yaml --exp_name lj_synta --reset # training in LJSpeech
@@ -62,7 +61,7 @@ CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/biaobei/synta.yaml -
 
 ### 3. Tensorboard
 
-```
+```bash
 tensorboard --logdir=checkpoints/lj_synta
 tensorboard --logdir=checkpoints/biaobei_synta
 tensorboard --logdir=checkpoints/libritts_synta
@@ -70,7 +69,7 @@ tensorboard --logdir=checkpoints/libritts_synta
 
 ### 4. 模型推理
 
-```
+```bash
 CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/lj/synta.yaml --exp_name lj_synta --reset --infer # inference in LJSpeech
 CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/biaobei/synta.yaml --exp_name biaobei_synta --reset --infer # inference in Biaobei
 CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/biaobei/synta.yaml --exp_name libritts_synta --reset ---infer # inference in LibriTTS
@@ -78,7 +77,9 @@ CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/biaobei/synta.yaml -
 
 ## 音频演示
 
-音频样本可以在我们的 [demo page](https://syntaspeech.github.io/) 中找到。
+论文中的音频样本可以在我们的 [demo page](https://syntaspeech.github.io/) 中找到。
+
+我们还为 LJSpeech 提供 [HuggingFace 演示页面](https://huggingface.co/spaces/NATSpeech/PortaSpeech)。 你可以在那里尝试你有趣的句子！
 
 ## 引用
 
