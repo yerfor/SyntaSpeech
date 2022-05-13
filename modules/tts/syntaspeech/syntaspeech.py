@@ -109,8 +109,10 @@ class SyntaSpeech(FastSpeech):
                 spk_embed=None, spk_id=None, pitch=None, infer=False, tgt_mels=None,
                 global_step=None, graph_lst=None, etypes_lst=None, *args, **kwargs):     
 
-        if self.hparams['use_spk_embed'] or self.hparams['use_spk_id']:
-            spk_embed = self.spk_embed_proj(spk_embed)[:, None, :]  
+        if self.hparams['use_spk_embed']:
+            spk_embed = spk_embed
+        elif self.hparams['use_spk_id']:
+            spk_embed = self.spk_embed_proj(spk_id)[:, None, :]  
         else:
             spk_embed = 0
 

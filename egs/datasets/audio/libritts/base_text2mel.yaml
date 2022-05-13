@@ -20,3 +20,4 @@ f0_max: 600
 vocoder: PWG
 vocoder_ckpt: checkpoints/pwg_libritts
 num_spk: 2000
+use_spk_id: true
