@@ -120,6 +120,7 @@ class SyntaSpeech(FastSpeech):
         style_embed = self.forward_style_embed(spk_embed, spk_id) # speaker embedding, [B, 1, C]
         x, tgt_nonpadding = self.run_text_encoder(
             txt_tokens, word_tokens, ph2word, word_len, mel2word, mel2ph, style_embed, ret, graph_lst=graph_lst, etypes_lst=etypes_lst)
+        x = x + style_embed # it maybe necessary to achieve multi-speaker
         x = x * tgt_nonpadding
         ret['nonpadding'] = tgt_nonpadding
         if self.hparams['use_pitch_embed']:

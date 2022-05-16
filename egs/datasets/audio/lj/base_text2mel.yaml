@@ -15,3 +15,4 @@ test_ids: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
 f0_min: 80
 f0_max: 600
 vocoder_ckpt: checkpoints/hifi_lj
+num_valid_plots: 30
