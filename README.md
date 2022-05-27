@@ -79,7 +79,7 @@ CUDA_VISIBLE_DEVICES=0 python tasks/run.py --config egs/tts/libritts/synta.yaml 
 
 Audio samples in the paper can be found in our [demo page](https://syntaspeech.github.io/).
 
-We also provide [HuggingFace Demo Page](https://huggingface.co/spaces/NATSpeech/PortaSpeech) for LJSpeech. Try your interesting sentences there!
+We also provide [HuggingFace Demo Page](https://huggingface.co/spaces/yerfor/SyntaSpeech) for LJSpeech. Try your interesting sentences there!
 
 ## Citation
 

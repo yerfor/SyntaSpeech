@@ -30,8 +30,17 @@ class BaseSpeechDataset(BaseDataset):
                 self.avail_idxs = list(range(len(self.sizes)))
             if prefix == 'train' and hparams['min_frames'] > 0:
                 self.avail_idxs = [x for x in self.avail_idxs if self.sizes[x] >= hparams['min_frames']]
-            self.sizes = [self.sizes[i] for i in self.avail_idxs]
-
+            try:
+                self.sizes = [self.sizes[i] for i in self.avail_idxs]
+            except:
+                tmp_sizes = []
+                for i in self.avail_idxs:
+                    try:
+                        tmp_sizes.append(self.sizes[i])
+                    except:
+                        continue
+                self.sizes = tmp_sizes
+                
     def _get_item(self, index):
         if hasattr(self, 'avail_idxs') and self.avail_idxs is not None:
             index = self.avail_idxs[index]

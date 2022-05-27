@@ -8,7 +8,7 @@ binarization_args:
   train_range: [ 871, -1 ]
   test_range: [ 0, 523 ]
   valid_range: [ 523, 871 ]
-  shuffle: false
+  shuffle: true
   with_spk_id: true
   with_spk_embed: false
 test_ids: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -20,3 +20,4 @@ f0_max: 600
 vocoder: PWG
 vocoder_ckpt: checkpoints/pwg_libritts
 num_spk: 2000
+use_spk_id: true
