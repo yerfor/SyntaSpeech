@@ -91,6 +91,11 @@ class BasePreprocessor:
             mfa_input_dir = f'{processed_dir}/mfa_inputs'
             remove_file(mfa_input_dir)
             
+            mfa_groups = [i // self.preprocess_args['nsample_per_mfa_group'] for i in range(len(items))]
+            if self.preprocess_args['mfa_group_shuffle']:
+                random.seed(hparams['seed'])
+                random.shuffle(mfa_groups)
+                
             args = [{
                 'item': item, 'mfa_input_dir': mfa_input_dir,
                 'wav_processed_tmp': wav_processed_tmp_dir,
