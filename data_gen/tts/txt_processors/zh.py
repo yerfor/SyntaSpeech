@@ -92,7 +92,8 @@ class TxtProcessor(BaseTxtProcessor):
             if ph == '|' or ph == '#':
                 i += 1
                 continue
-            elif ph in [',', '.']:
+            # elif ph in [',', '.']:
+            elif ph in [',', '.', '?', '!']:
                 i += 1
                 txt_struct[i][1].append(ph)
                 i += 1
@@ -105,6 +106,7 @@ class TxtProcessor(BaseTxtProcessor):
 
 
 if __name__ == '__main__':
-    t = 'simon演唱过后，simon还进行了simon精彩的文艺演出simon.'
+    # t = 'simon演唱过后，simon还进行了simon精彩的文艺演出simon.'
+    t = '你当我傻啊？脑子那么大怎么塞进去？?？'
     phs, txt = TxtProcessor.process(t, {'use_tone': True})
     print(phs, txt)
