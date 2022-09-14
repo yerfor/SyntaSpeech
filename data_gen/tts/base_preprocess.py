@@ -27,7 +27,6 @@ class BasePreprocessor:
 
     def meta_data(self):
         """
-
         :return: {'item_name': Str, 'wav_fn': Str, 'txt': Str, 'spk_name': Str, 'txt_loader': None or Func}
         """
         raise NotImplementedError
@@ -91,16 +90,17 @@ class BasePreprocessor:
             mfa_dict = set()
             mfa_input_dir = f'{processed_dir}/mfa_inputs'
             remove_file(mfa_input_dir)
-            # group MFA inputs for better parallelism
+            
             mfa_groups = [i // self.preprocess_args['nsample_per_mfa_group'] for i in range(len(items))]
             if self.preprocess_args['mfa_group_shuffle']:
                 random.seed(hparams['seed'])
                 random.shuffle(mfa_groups)
+                
             args = [{
                 'item': item, 'mfa_input_dir': mfa_input_dir,
-                'mfa_group': mfa_group, 'wav_processed_tmp': wav_processed_tmp_dir,
+                'wav_processed_tmp': wav_processed_tmp_dir,
                 'preprocess_args': self.preprocess_args
-            } for item, mfa_group in zip(items, mfa_groups)]
+            } for item in items]
             for i, (ph_gb_word_nosil, new_wav_align_fn) in multiprocess_run_tqdm(
                     self.build_mfa_inputs, args, desc='Build MFA data'):
                 items[i]['wav_align_fn'] = new_wav_align_fn
@@ -120,8 +120,9 @@ class BasePreprocessor:
         try:
             if txt_loader is not None:
                 txt_raw = txt_loader(txt_raw)
+
             ph, txt, word, ph2word, ph_gb_word = cls.txt_to_ph(txt_processor, txt_raw, preprocess_args)
-            wav_fn, wav_align_fn = cls.process_wav(
+            wav_fn, wav_align_fn, spk_name = cls.process_wav(
                 item_name, wav_fn,
                 hparams['processed_data_dir'],
                 wav_processed_tmp, preprocess_args)
@@ -129,14 +130,14 @@ class BasePreprocessor:
             # wav for binarization
             ext = os.path.splitext(wav_fn)[1]
             os.makedirs(wav_processed_dir, exist_ok=True)
-            new_wav_fn = f"{wav_processed_dir}/{item_name}{ext}"
+            new_wav_fn = f"{wav_processed_dir}/{item_name}{ext}" if not item_name.endswith(ext) else f"{wav_processed_dir}/{item_name}"
             move_link_func = move_file if os.path.dirname(wav_fn) == wav_processed_tmp else link_file
             move_link_func(wav_fn, new_wav_fn)
             return {
                 'txt': txt, 'txt_raw': txt_raw, 'ph': ph,
                 'word': word, 'ph2word': ph2word, 'ph_gb_word': ph_gb_word,
                 'wav_fn': new_wav_fn, 'wav_align_fn': wav_align_fn,
-                'others': others
+                'others': others, 'spk_name': spk_name
             }
         except:
             traceback.print_exc()
@@ -161,6 +162,8 @@ class BasePreprocessor:
             sr_file = librosa.core.get_samplerate(wav_fn)
             output_fn_for_align = None
             ext = os.path.splitext(wav_fn)[1]
+            
+            spk_name = wav_fn.split('/')[-1][:7]
             input_fn = f"{wav_processed_tmp}/{item_name}{ext}"
             link_file(wav_fn, input_fn)
             for p in processors:
@@ -169,9 +172,9 @@ class BasePreprocessor:
                     input_fn, sr, output_fn_for_align = outputs
                 else:
                     input_fn, sr = outputs
-            return input_fn, output_fn_for_align
+            return input_fn, output_fn_for_align, spk_name
         else:
-            return wav_fn, wav_fn
+            return wav_fn, wav_fn, wav_fn.split('/')[-1][:7]
 
     def _phone_encoder(self, ph_set):
         ph_set_fn = f"{self.processed_dir}/phone_set.json"
@@ -216,20 +219,25 @@ class BasePreprocessor:
         return spk_map
 
     @classmethod
-    def build_mfa_inputs(cls, item, mfa_input_dir, mfa_group, wav_processed_tmp, preprocess_args):
+    def build_mfa_inputs(cls, item, mfa_input_dir, wav_processed_tmp, preprocess_args):
         item_name = item['item_name']
         wav_align_fn = item['wav_align_fn']
         ph_gb_word = item['ph_gb_word']
         ext = os.path.splitext(wav_align_fn)[1]
-        mfa_input_group_dir = f'{mfa_input_dir}/{mfa_group}'
+        mfa_spk = item_name[:7]
+        mfa_input_group_dir = f'{mfa_input_dir}/{mfa_spk}'
         os.makedirs(mfa_input_group_dir, exist_ok=True)
-        new_wav_align_fn = f"{mfa_input_group_dir}/{item_name}{ext}"
-        move_link_func = move_file if os.path.dirname(wav_align_fn) == wav_processed_tmp else link_file
-        move_link_func(wav_align_fn, new_wav_align_fn)
+        new_wav_align_fn = f"{mfa_input_group_dir}/{item_name}{ext}" if not item_name.endswith(ext) else f"{mfa_input_group_dir}/{item_name}"
+        link_file(wav_align_fn, new_wav_align_fn)
         ph_gb_word_nosil = " ".join(["_".join([p for p in w.split("_") if not is_sil_phoneme(p)])
                                      for w in ph_gb_word.split(" ") if not is_sil_phoneme(w)])
-        with open(f'{mfa_input_group_dir}/{item_name}.lab', 'w') as f_txt:
-            f_txt.write(ph_gb_word_nosil)
+        if not item_name.endswith(ext):
+            with open(f'{mfa_input_group_dir}/{item_name}.lab', 'w') as f_txt:
+                f_txt.write(ph_gb_word_nosil)
+        else:
+            with open(f'{mfa_input_group_dir}/{item_name[:-4]}.lab', 'w') as f_txt:
+                f_txt.write(ph_gb_word_nosil)
+
         return ph_gb_word_nosil, new_wav_align_fn
 
     def load_spk_map(self, base_dir):
